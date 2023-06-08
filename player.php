@@ -1,5 +1,5 @@
 <?php
-include 'db/connection.php';
+include('db/connection.php');
 if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
   // Redirecione para outra página
   header('Location: login.php');
@@ -7,6 +7,7 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
 }
 
 ?>
+
 <!doctype html>
 <html lang="en" class="h-100" data-bs-theme="auto">
 
@@ -15,27 +16,20 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
 </head>
 
 <body>
+
   <section class="ms-5 mt-5 p-4">
-    <h2 class="text-center">Oração</h2>
+    <h2 class="text-center">Status da transmissão</h2>
     <div class="row">
       <div class="container">
-        <div class="btnAdd">
-          <a class="mb-xs mt-xs mr-xs btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPrayer"><i class=" fa fa-plus"></i> Cadastrar</a>
-
-          <a type="button" name="add" id="addEmployee" class="mb-xs mt-xs mr-xs btn btn-info" href="views/oracao/printOracao.php" target="_blank"><i class="fa fa-print"></i> Imprimir</a>
-
-
-          <a class="mb-xs mt-xs mr-xs btn btn-danger" href="views/oracao/dropOracao.php"><i class=" fa fa-bug"></i> DROP Tabela</a>
-        </div>
         <div class="row">
           <div class="col-md-4"></div>
           <div class="col-md-12">
             <table id="example" class="table table-bordered table-striped mb-none">
               <thead>
                 <th>Id</th>
-                <th>NOME</th>
-                <th>MENSAGEM</th>
-                <th>MOTIVO ORAÇÃO</th>
+                <th>URL</th>
+                <th>EMBED</th>
+                <th>TIPO</th>
                 <th>AÇÕES</th>
               </thead>
               <tbody>
@@ -47,130 +41,61 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
       </div>
     </div>
 
-    <div class="modal fade" id="modalPrayer" tabindex="-1" role="dialog" aria-labelledby="modalPrayer" aria-hidden="true" style="margin-top: 50px">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <form id="prayerForm" method="POST" action="compiler/processa_oracao.php">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modal-title-defaul">Pedido de oração</h5>
-            </div>
-            <span id="msg-error"></span>
-            <div class="modal-body">
-              <div class="form-group">
-                <label for="namePrayer">Nome:</label>
-                <input type="text" name="name" class="form-control" id="namePrayer" placeholder="Digite seu nome aqui" style="color: #000000;">
-              </div>
-              <div class="form-group">
-                <label for="stateCodePrayer">Estado:</label>
-                <select class="form-control" data-tf="state" data-tf-to="#cityCodePrayer" id="stateCodePrayer" name="stateCode" style="color: #000000;">
-                  <option value="">--Selecione--</option>
-                  <?php
-                  $result_estado = "SELECT * FROM estado";
-                  $resultado_estado = mysqli_query($con, $result_estado);
-                  while ($row_estado = mysqli_fetch_assoc($resultado_estado)) { ?>
-                    <option value="<?php echo $row_estado['id']; ?>"><?php echo $row_estado['nome']; ?></option> <?php
-                                                                                                                }
-                                                                                                                  ?>
-                  <option value="<?php echo ($idst); ?>"><?php echo ($namest); ?></option>
-                </select>
-              </div>
-              <div class="form-group focused">
-                <label for="cityCodePrayer">Cidade:</label>
-                <select class="form-control" id="cityCodePrayer" name="cityCode" style="color: #000000; display: none"></select>
-              </div>
-              <div class="form-group">
-                <label for="stateCodePrayer">Motivo do Pedido</label>
-                <select class="form-control" data-tf="state" data-tf-to="#motivopedido" id="lstmotivopedido" name="motivo" style="color: #000000;">
-                  <option value="">--Selecione--</option>
-                  <?php
-                  $result_motivos_oracao = "SELECT * FROM motivos_oracao";
-                  $resultado_motivos_oracao = mysqli_query($con, $result_motivos_oracao);
-                  while ($row_motivos_oracao = mysqli_fetch_assoc($resultado_motivos_oracao)) { ?>
-                    <option value="<?php echo $row_motivos_oracao['id']; ?>"><?php echo $row_motivos_oracao['descricao']; ?></option> <?php
-                                                                                                                                    }
-                                                                                                                                      ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="requestPrayer">Pedido:</label>
-                <textarea style="color: #000000; display: none" class="form-control" name="request" id="requestPrayer" rows="3"></textarea>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger btn-md" data-bs-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-success btn-md">Enviar</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
 
-    <!-- FORM EDITAR ORAÇÃO -->
-    <div class="modal fade" id="modalPrayerEdit" tabindex="-1" role="dialog" aria-labelledby="modalPrayerEditLabel" aria-hidden="true" style="margin-top: 50px">
-      <div class="modal-dialog" role="document">
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
         <div class="modal-content">
-          <form id="updateOracao" method="POST" action="">
-            <div class="modal-header">
-              <h5 class="modal-title" id="modal-title-defaul">Editar Pedido de Oração</h5>
-            </div>
-            <span id="msg-error"></span>
-            <div class="modal-body">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Alterar status da transmissão</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="updatePlayer">
               <input type="hidden" name="id" id="id" value="">
               <input type="hidden" name="trid" id="trid" value="">
-
-              <div class="form-group">
-                <label for="fieldNamePrayer">Nome:</label>
-                <input type="text" name="fieldNamePrayer" class="form-control" id="fieldNamePrayer" placeholder="Digite seu nome aqui" style="color: #000000;">
+              <div class="mb-3 row">
+                <label for="fieldUrl" class="col-md-3 form-label">Url</label>
+                <div class="col-md-9">
+                  <input type="text" class="form-control" id="fieldUrl" name="name">
+                </div>
+              </div>
+              <div class="mb-3 row">
+                <label for="fieldEmbed" class="col-md-3 form-label">Embed</label>
+                <div class="col-md-9">
+                  <input type="text" class="form-control" id="fieldEmbed" name="fieldEmbed">
+                </div>
               </div>
 
-              <div class="form-group">
-                <label for="fieldStateCodePrayer">Estado:</label>
-                <select class="form-control" data-tf="state" data-tf-to="#fieldStateCodePrayer" id="fieldStateCodePrayer" name="fieldStateCodePrayer" style="color: #000000;">
-                  <option value="">--Selecione--</option>
-                  <?php
-                  $result_estado = "SELECT * FROM estado";
-                  $resultado_estado = mysqli_query($con, $result_estado);
-                  while ($row_estado = mysqli_fetch_assoc($resultado_estado)) { ?>
-                    <option value="<?php echo $row_estado['id']; ?>"><?php echo $row_estado['nome']; ?></option> <?php
-                                                                                                                }
-                                                                                                                  ?>
-                  <option value="<?php echo ($idst); ?>"><?php echo ($namest); ?></option>
-                </select>
-              </div>
+              <div class="mb-4 row">
+                <div class="form-floating">
+                  <select class="form-select" id="fieldTipo" aria-label="Floating label select example">
+                    <option selected>Selecione a origem da transmissão</option>
+                    <option value="1">offline</option>
+                    <option value="2">saopedro</option>
+                    <option value="3">jau</option>
+                    <option value="4">youtube</option>
+                    <option value="5">americo</option>
+                  </select>
+                  <label for="fieldTipo"> Status da Transmissão</label>
+                </div>
 
-              <div class="form-group focused">
-                <label for="fieldCityCodePrayer">Cidade:</label>
-                <select class="form-control" id="fieldCityCodePrayer" name="fieldCityCodePrayer" style="color: #000000;"></select>
               </div>
+              <!-- 
+              <div class="mb-3 row">
+                <label for="fieldTipo" class="col-md-3 form-label">Status da Transmissão</label>
+                <div class="col-md-9">
+                  <input type="text" class="form-control" id="fieldTipo" name="fieldTipo">
+                </div>
+              </div> -->
 
-              <div class="form-group">
-                <label for="fieldLstMotivoPedido">Motivo do Pedido</label>
-                <select class="form-control" data-tf="state" data-tf-to="#fieldLstMotivoPedido" id="fieldLstMotivoPedido" name="motivo" style="color: #000000;">
-                  <option value="">--Selecione--</option>
-                  <?php
-                  $result_motivos_oracao = "SELECT * FROM motivos_oracao";
-                  $resultado_motivos_oracao = mysqli_query($con, $result_motivos_oracao);
-                  while ($row_motivos_oracao = mysqli_fetch_assoc($resultado_motivos_oracao)) { ?>
-                    <option value="<?php echo $row_motivos_oracao['id']; ?>"><?php echo $row_motivos_oracao['descricao']; ?></option> <?php
-                                                                                                                                    }
-                                                                                                                                      ?>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="fieldRequestPrayer">Pedido:</label>
-                <textarea style="color: #000000;" class="form-control" name="fieldRequestPrayer" id="fieldRequestPrayer" rows="3"></textarea>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger btn-md" data-bs-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-success btn-md">Enviar</button>
-            </div>
-          </form>
+              <button type="submit" class="btn btn-success">Confirmar</button>
+              <button type="button" class="btn btn-danger btn-md" data-bs-dismiss="modal">Fechar</button>
+            </form>
+          </div>
+
         </div>
       </div>
     </div>
-
-
 
   </section>
 
@@ -200,7 +125,7 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
         'paging': 'true',
         'order': [],
         'ajax': {
-          'url': 'views/oracao/manyOracao.php',
+          'url': 'views/player/manyPlayer.php',
           'type': 'post',
         },
         "aoColumnDefs": [{
@@ -210,25 +135,21 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
       });
     });
 
-    $(document).on('submit', '#updateOracao', function(e) {
+    $(document).on('submit', '#updatePlayer', function(e) {
       e.preventDefault();
       //var tr = $(this).closest('tr');
-      var nome = $('#fieldNamePrayer').val();
-      var estado = $('#fieldStateCodePrayer').val();
-      var cidade = $('#fieldCityCodePrayer').val();
-      var mens_dest = $('#fieldRequestPrayer').val();
-      var motivo_oracao = $('#fieldLstMotivoPedido').val();
+      var url = $('#fieldUrl').val();
+      var file = $('#fieldEmbed').val();
+      var tipo = $('#fieldTipo').val();
       var id = $('#id').val();
-      if (nome != '' && motivo_oracao != '') {
+      if (tipo != '') {
         $.ajax({
-          url: "views/oracao/updateOracao.php",
+          url: "views/player/updatePlayer.php",
           type: "post",
           data: {
-            nome: nome,
-            estado: estado,
-            cidade: cidade,
-            mens_dest: mens_dest,
-            motivo_oracao: motivo_oracao,
+            url: url,
+            file: file,
+            tipo: tipo,
             id: id
           },
           success: function(data) {
@@ -243,9 +164,9 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
               // table.cell(parseInt(trid) - 1,4).data(city);
               var button = '<td><a href="javascript:void();" data-id="' + id + '" class="btn btn-info btn-md editbtn">Edit</a>  <a href="#!"  data-id="' + id + '"  class="btn btn-danger btn-md deleteBtn">Delete</a></td>';
               var row = table.row("[id='" + trid + "']");
-              row.row("[id='" + trid + "']").data([id, nome, motivo_oracao, button]);
-              $('#modalPrayer').modal('hide');
-              window.location.href = "<?php echo "index.php?a=oracao.php"; ?>";
+              row.row("[id='" + trid + "']").data([tipo]);
+              $('#exampleModal').modal('hide');
+              window.location.href = "<?php echo "index.php?a=player.php"; ?>";
             } else {
               alert('Erro');
             }
@@ -254,6 +175,7 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
       } else {
         alert('Prenecha todos os campos.');
       }
+      window.location.href = "<?php echo "index.php?a=player.php"; ?>";
     });
 
 
@@ -262,21 +184,20 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
       var trid = $(this).closest('tr').attr('id');
       // console.log(selectedRow);
       var id = $(this).data('id');
-      $('#modalPrayerEdit').modal('show');
+      $('#exampleModal').modal('show');
 
       $.ajax({
-        url: "views/oracao/getOracao.php",
+        url: "views/player/getPlayer.php",
         data: {
           id: id
         },
         type: 'post',
         success: function(data) {
           var json = JSON.parse(data);
-          $('#fieldNamePrayer').val(json.nome);
-          $('#fieldStateCodePrayer').val(json.estado);
-          $('#fieldCityCodePrayer').val(json.cidade);
-          $('#fieldRequestPrayer').val(json.mens_dest);
-          $('#fieldLstMotivoPedido').val(json.motivo_oracao);
+          alert(data);
+          $('#fieldUrl').val(json.url);
+          $('#fieldEmbed').val(json.file);
+          $('#fieldTipo').val(json.tipo);
           $('#id').val(id);
           $('#trid').val(trid);
         }
@@ -529,7 +450,7 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
         } else {
           //Receber os dados do formulário
           var oracao = $("#prayerForm").serialize();
-          $.post("views/oracao/addOracao.php", oracao, function(retorna) {
+          $.post("views/oracao/addOração.php", oracao, function(retorna) {
             if (retorna) {
               //Alerta de cadastro realizado com sucesso
               //$("#msg").html('<div class="text-success" role="alert">Oração enviada com sucesso!</div>');
@@ -644,99 +565,6 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
     });
   </script>
 
-
-  <!-- Modal EDITAR -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Update User</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="updateUser">
-            <input type="hidden" name="id" id="id" value="">
-            <input type="hidden" name="trid" id="trid" value="">
-            <div class="mb-3 row">
-              <label for="nameField" class="col-md-3 form-label">Name</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" id="nameField" name="name">
-              </div>
-            </div>
-            <div class="mb-3 row">
-              <label for="emailField" class="col-md-3 form-label">Email</label>
-              <div class="col-md-9">
-                <input type="email" class="form-control" id="emailField" name="email">
-              </div>
-            </div>
-            <div class="mb-3 row">
-              <label for="mobileField" class="col-md-3 form-label">Mobile</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" id="mobileField" name="mobile">
-              </div>
-            </div>
-            <div class="mb-3 row">
-              <label for="cityField" class="col-md-3 form-label">City</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" id="cityField" name="City">
-              </div>
-            </div>
-            <div class="text-center">
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- Add user Modal -->
-  <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Add User</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="addUser" action="">
-            <div class="mb-3 row">
-              <label for="addUserField" class="col-md-3 form-label">Name</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" id="addUserField" name="name">
-              </div>
-            </div>
-            <div class="mb-3 row">
-              <label for="addEmailField" class="col-md-3 form-label">Email</label>
-              <div class="col-md-9">
-                <input type="email" class="form-control" id="addEmailField" name="email">
-              </div>
-            </div>
-            <div class="mb-3 row">
-              <label for="addMobileField" class="col-md-3 form-label">Mobile</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" id="addMobileField" name="mobile">
-              </div>
-            </div>
-            <div class="mb-3 row">
-              <label for="addCityField" class="col-md-3 form-label">City</label>
-              <div class="col-md-9">
-                <input type="text" class="form-control" id="addCityField" name="City">
-              </div>
-            </div>
-            <div class="text-center">
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
 </body>
 

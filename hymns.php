@@ -15,27 +15,30 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
 </head>
 
 <body>
+
   <section class="ms-5 mt-5 p-4">
-    <h2 class="text-center">Oração</h2>
+    <h2 class="text-center">Hinos Especiais</h2>
     <div class="row">
       <div class="container">
         <div class="btnAdd">
           <a class="mb-xs mt-xs mr-xs btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPrayer"><i class=" fa fa-plus"></i> Cadastrar</a>
 
-          <a type="button" name="add" id="addEmployee" class="mb-xs mt-xs mr-xs btn btn-info" href="views/oracao/printOracao.php" target="_blank"><i class="fa fa-print"></i> Imprimir</a>
+          <button type="button" name="add" id="addEmployee" class="mb-xs mt-xs mr-xs btn btn-info"><i class="fa fa-print"></i> Imprimir</button>
 
+          <a class="mb-xs mt-xs mr-xs btn btn-danger" href="views/hymns/dropHymns.php"><i class=" fa fa-bug"></i> DROP Tabela</a>
 
-          <a class="mb-xs mt-xs mr-xs btn btn-danger" href="views/oracao/dropOracao.php"><i class=" fa fa-bug"></i> DROP Tabela</a>
         </div>
         <div class="row">
           <div class="col-md-4"></div>
           <div class="col-md-12">
             <table id="example" class="table table-bordered table-striped mb-none">
               <thead>
-                <th>Id</th>
-                <th>NOME</th>
-                <th>MENSAGEM</th>
-                <th>MOTIVO ORAÇÃO</th>
+                <th>ID</th>
+                <th>CANTOR</th>
+                <th>CIDADE</th>
+                <th>PASTOR</th>
+                <th>THIRD</th>
+                <th>TÍTULO DO HINO</th>
                 <th>AÇÕES</th>
               </thead>
               <tbody>
@@ -52,49 +55,32 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
         <div class="modal-content">
           <form id="prayerForm" method="POST" action="compiler/processa_oracao.php">
             <div class="modal-header">
-              <h5 class="modal-title" id="modal-title-defaul">Pedido de oração</h5>
+              <h5 class="modal-title" id="modal-title-defaul">Incluir Hino especial</h5>
             </div>
             <span id="msg-error"></span>
             <div class="modal-body">
+
               <div class="form-group">
-                <label for="namePrayer">Nome:</label>
-                <input type="text" name="name" class="form-control" id="namePrayer" placeholder="Digite seu nome aqui" style="color: #000000;">
-              </div>
-              <div class="form-group">
-                <label for="stateCodePrayer">Estado:</label>
-                <select class="form-control" data-tf="state" data-tf-to="#cityCodePrayer" id="stateCodePrayer" name="stateCode" style="color: #000000;">
-                  <option value="">--Selecione--</option>
-                  <?php
-                  $result_estado = "SELECT * FROM estado";
-                  $resultado_estado = mysqli_query($con, $result_estado);
-                  while ($row_estado = mysqli_fetch_assoc($resultado_estado)) { ?>
-                    <option value="<?php echo $row_estado['id']; ?>"><?php echo $row_estado['nome']; ?></option> <?php
-                                                                                                                }
-                                                                                                                  ?>
-                  <option value="<?php echo ($idst); ?>"><?php echo ($namest); ?></option>
-                </select>
-              </div>
-              <div class="form-group focused">
-                <label for="cityCodePrayer">Cidade:</label>
-                <select class="form-control" id="cityCodePrayer" name="cityCode" style="color: #000000; display: none"></select>
+                <label for="hymnsCantor">Nome do Cantor</label>
+                <input type="text" name="hymnsCantor" class="form-control" id="hymnsCantor" placeholder="Digite seu nome aqui" style="color: #000000;">
               </div>
               <div class="form-group">
-                <label for="stateCodePrayer">Motivo do Pedido</label>
-                <select class="form-control" data-tf="state" data-tf-to="#motivopedido" id="lstmotivopedido" name="motivo" style="color: #000000;">
-                  <option value="">--Selecione--</option>
-                  <?php
-                  $result_motivos_oracao = "SELECT * FROM motivos_oracao";
-                  $resultado_motivos_oracao = mysqli_query($con, $result_motivos_oracao);
-                  while ($row_motivos_oracao = mysqli_fetch_assoc($resultado_motivos_oracao)) { ?>
-                    <option value="<?php echo $row_motivos_oracao['id']; ?>"><?php echo $row_motivos_oracao['descricao']; ?></option> <?php
-                                                                                                                                    }
-                                                                                                                                      ?>
-                </select>
+                <label for="hymnsCidade">Cidade</label>
+                <input type="text" name="hymnsCidade" class="form-control" id="hymnsCidade" placeholder="Digite seu nome aqui" style="color: #000000;">
               </div>
               <div class="form-group">
-                <label for="requestPrayer">Pedido:</label>
-                <textarea style="color: #000000; display: none" class="form-control" name="request" id="requestPrayer" rows="3"></textarea>
+                <label for="hymnsPastor">Nome do pastor</label>
+                <input type="text" name="hymnsPastor" class="form-control" id="hymnsPastor" placeholder="Digite seu nome aqui" style="color: #000000;">
               </div>
+              <div class="form-group">
+                <label for="hymnsThird">Tarja (true ou false)</label>
+                <input type="text" name="hymnsThird" class="form-control" id="hymnsThird" placeholder="Digite seu nome aqui" style="color: #000000;">
+              </div>
+              <div class="form-group">
+                <label for="hymnsTitulo">Tarja (true ou false)</label>
+                <input type="text" name="hymnsTitulo" class="form-control" id="hymnsTitulo" placeholder="Digite seu nome aqui" style="color: #000000;">
+              </div>
+
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-danger btn-md" data-bs-dismiss="modal">Close</button>
@@ -111,7 +97,7 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
         <div class="modal-content">
           <form id="updateOracao" method="POST" action="">
             <div class="modal-header">
-              <h5 class="modal-title" id="modal-title-defaul">Editar Pedido de Oração</h5>
+              <h5 class="modal-title" id="modal-title-defaul">Editar Hino especial</h5>
             </div>
             <span id="msg-error"></span>
             <div class="modal-body">
@@ -119,47 +105,28 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
               <input type="hidden" name="trid" id="trid" value="">
 
               <div class="form-group">
-                <label for="fieldNamePrayer">Nome:</label>
-                <input type="text" name="fieldNamePrayer" class="form-control" id="fieldNamePrayer" placeholder="Digite seu nome aqui" style="color: #000000;">
-              </div>
-
-              <div class="form-group">
-                <label for="fieldStateCodePrayer">Estado:</label>
-                <select class="form-control" data-tf="state" data-tf-to="#fieldStateCodePrayer" id="fieldStateCodePrayer" name="fieldStateCodePrayer" style="color: #000000;">
-                  <option value="">--Selecione--</option>
-                  <?php
-                  $result_estado = "SELECT * FROM estado";
-                  $resultado_estado = mysqli_query($con, $result_estado);
-                  while ($row_estado = mysqli_fetch_assoc($resultado_estado)) { ?>
-                    <option value="<?php echo $row_estado['id']; ?>"><?php echo $row_estado['nome']; ?></option> <?php
-                                                                                                                }
-                                                                                                                  ?>
-                  <option value="<?php echo ($idst); ?>"><?php echo ($namest); ?></option>
-                </select>
-              </div>
-
-              <div class="form-group focused">
-                <label for="fieldCityCodePrayer">Cidade:</label>
-                <select class="form-control" id="fieldCityCodePrayer" name="fieldCityCodePrayer" style="color: #000000;"></select>
-              </div>
-
-              <div class="form-group">
-                <label for="fieldLstMotivoPedido">Motivo do Pedido</label>
-                <select class="form-control" data-tf="state" data-tf-to="#fieldLstMotivoPedido" id="fieldLstMotivoPedido" name="motivo" style="color: #000000;">
-                  <option value="">--Selecione--</option>
-                  <?php
-                  $result_motivos_oracao = "SELECT * FROM motivos_oracao";
-                  $resultado_motivos_oracao = mysqli_query($con, $result_motivos_oracao);
-                  while ($row_motivos_oracao = mysqli_fetch_assoc($resultado_motivos_oracao)) { ?>
-                    <option value="<?php echo $row_motivos_oracao['id']; ?>"><?php echo $row_motivos_oracao['descricao']; ?></option> <?php
-                                                                                                                                    }
-                                                                                                                                      ?>
-                </select>
+                <label for="fieldHymnsCantor">Nome do Cantor</label>
+                <input type="text" name="fieldHymnsCantor" class="form-control" id="fieldHymnsCantor" placeholder="Digite seu nome aqui" style="color: #000000;">
               </div>
               <div class="form-group">
-                <label for="fieldRequestPrayer">Pedido:</label>
-                <textarea style="color: #000000;" class="form-control" name="fieldRequestPrayer" id="fieldRequestPrayer" rows="3"></textarea>
+                <label for="FieldHymnsCidade">Cidade</label>
+                <input type="text" name="FieldHymnsCidade" class="form-control" id="FieldHymnsCidade" placeholder="Digite seu nome aqui" style="color: #000000;">
               </div>
+              <div class="form-group">
+                <label for="fieldHymnsPastor">Nome do pastor</label>
+                <input type="text" name="fieldHymnsPastor" class="form-control" id="fieldHymnsPastor" placeholder="Digite seu nome aqui" style="color: #000000;">
+              </div>
+              <div class="form-group">
+                <label for="fieldHymnsThird">Tarja (true ou false)</label>
+                <input type="text" name="fieldHymnsThird" class="form-control" id="fieldHymnsThird" placeholder="Digite seu nome aqui" style="color: #000000;">
+              </div>
+              <div class="form-group">
+                <label for="fieldHymnsTitulo">Tarja (true ou false)</label>
+                <input type="text" name="fieldHymnsTitulo" class="form-control" id="fieldHymnsTitulo" placeholder="Digite seu nome aqui" style="color: #000000;">
+              </div>
+
+
+
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-danger btn-md" data-bs-dismiss="modal">Close</button>
@@ -200,12 +167,12 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
         'paging': 'true',
         'order': [],
         'ajax': {
-          'url': 'views/oracao/manyOracao.php',
+          'url': 'views/hymns/manyHymns.php',
           'type': 'post',
         },
         "aoColumnDefs": [{
           "bSortable": false,
-          "aTargets": [4]
+          "aTargets": [6]
         }, ]
       });
     });
@@ -213,22 +180,22 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
     $(document).on('submit', '#updateOracao', function(e) {
       e.preventDefault();
       //var tr = $(this).closest('tr');
-      var nome = $('#fieldNamePrayer').val();
-      var estado = $('#fieldStateCodePrayer').val();
-      var cidade = $('#fieldCityCodePrayer').val();
-      var mens_dest = $('#fieldRequestPrayer').val();
-      var motivo_oracao = $('#fieldLstMotivoPedido').val();
+      var cantor = $('#fieldHymnsCantor').val();
+      var cidade = $('#fieldHymnsCidade').val();
+      var pastor = $('#fieldHymnsPastor').val();
+      var third = $('#fieldHymnsThird').val();
+      var titulo = $('#fieldHymnsTitulo').val();
       var id = $('#id').val();
-      if (nome != '' && motivo_oracao != '') {
+      if (cantor != '' && titulo != '') {
         $.ajax({
-          url: "views/oracao/updateOracao.php",
+          url: "views/hymns/updateHymns.php",
           type: "post",
           data: {
-            nome: nome,
-            estado: estado,
+            cantor: cantor,
             cidade: cidade,
-            mens_dest: mens_dest,
-            motivo_oracao: motivo_oracao,
+            pastor: pastor,
+            third: third,
+            titulo: titulo,
             id: id
           },
           success: function(data) {
@@ -245,7 +212,7 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
               var row = table.row("[id='" + trid + "']");
               row.row("[id='" + trid + "']").data([id, nome, motivo_oracao, button]);
               $('#modalPrayer').modal('hide');
-              window.location.href = "<?php echo "index.php?a=oracao.php"; ?>";
+              window.location.href = "<?php echo "index.php?a=hymns.php"; ?>";
             } else {
               alert('Erro');
             }
@@ -265,18 +232,18 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
       $('#modalPrayerEdit').modal('show');
 
       $.ajax({
-        url: "views/oracao/getOracao.php",
+        url: "views/hymns/getHymns.php",
         data: {
           id: id
         },
         type: 'post',
         success: function(data) {
           var json = JSON.parse(data);
-          $('#fieldNamePrayer').val(json.nome);
-          $('#fieldStateCodePrayer').val(json.estado);
-          $('#fieldCityCodePrayer').val(json.cidade);
-          $('#fieldRequestPrayer').val(json.mens_dest);
-          $('#fieldLstMotivoPedido').val(json.motivo_oracao);
+          $('#fieldHymnsCantor').val(json.cantor);
+          $('#fieldHymnsCidade').val(json.cidade);
+          $('#fieldHymnsPastor').val(json.pastor);
+          $('#fieldHymnsThird').val(json.third);
+          $('#fieldHymnsTitulo').val(json.titulo);
           $('#id').val(id);
           $('#trid').val(trid);
         }
@@ -289,7 +256,7 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
       var id = $(this).data('id');
       if (confirm("Confirma exclusão ? ")) {
         $.ajax({
-          url: "views/oracao/deleteOracao.php",
+          url: "views/hymns/deleteHymns.php",
           data: {
             id: id
           },
@@ -518,18 +485,18 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
       $('#prayerForm').on('submit', function(event) {
         event.preventDefault();
         //validar dados do formulario oração
-        if ($('#namePrayer').val() == "") {
+        if ($('#hymnsCantor').val() == "") {
           $("#msg-error").html('<div class="alert alert-danger" role="alert">Preencha o nome!</div>');
-        } else if ($('#stateCodePrayer').val() == undefined) {
-          $("#msg-error").html('<div class="alert alert-danger" role="alert">Preencha o estado!</div>');
-        } else if ($('#cityCodePrayer').val() == undefined) {
+        } else if ($('#hymnsCidade').val() == undefined) {
           $("#msg-error").html('<div class="alert alert-danger" role="alert">Preencha a cidade!</div>');
-        } else if ($('#lstmotivopedido').val() == "") {
-          $("#msg-error").html('<div class="alert alert-danger" role="alert">Informe o motivo do pedido!</div>');
+        } else if ($('#hymnsPastor').val() == undefined) {
+          $("#msg-error").html('<div class="alert alert-danger" role="alert">Informe o nome do pastor!</div>');
+        } else if ($('#hymnsTitulo').val() == "") {
+          $("#msg-error").html('<div class="alert alert-danger" role="alert">Informe o título do hino!</div>');
         } else {
           //Receber os dados do formulário
           var oracao = $("#prayerForm").serialize();
-          $.post("views/oracao/addOracao.php", oracao, function(retorna) {
+          $.post("views/hymns/addHymns.php", oracao, function(retorna) {
             if (retorna) {
               //Alerta de cadastro realizado com sucesso
               //$("#msg").html('<div class="text-success" role="alert">Oração enviada com sucesso!</div>');
@@ -540,7 +507,7 @@ if (!isset($_SESSION['loggedIn']) || $_SESSION['loggedIn'] !== true) {
 
               //Fechar a janela modal cadastrar
               $('#modalPrayer').modal('hide');
-              window.location.href = "<?php echo "index.php?a=oracao.php"; ?>";
+              window.location.href = "<?php echo "index.php?a=hymns.php"; ?>";
             } else {}
           });
         }

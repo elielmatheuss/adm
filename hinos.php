@@ -1,1 +1,0 @@
-<h1 style="margin-top: 64px">HINOS</h1>

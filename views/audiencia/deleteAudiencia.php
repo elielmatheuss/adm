@@ -1,8 +1,8 @@
 <?php 
-include('../../db/connection.php');
+include '../../db/connection.php';
 
 $user_id = $_POST['id'];
-$sql = "DELETE FROM users WHERE id='$user_id'";
+$sql = "DELETE FROM audiencia WHERE id='$user_id'";
 $delQuery =mysqli_query($con,$sql);
 if($delQuery==true)
 {
@@ -21,6 +21,4 @@ else
     );
 
     echo json_encode($data);
-} 
-
-?>
+}
